@@ -17,29 +17,12 @@
 
     <li class="nav-item">
         <a class="nav-link" href="{{route('pelanggan.index')}}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <i class="fas fa-fw fa-user-friends"></i>
             <span>Pelanggan</span></a>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
-
-    <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span></a>
-    </li>
-
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Tables</span></a>
-    </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider d-none d-md-block">
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
