@@ -2,7 +2,9 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Student Diary Team</span>
+            <span>Copyright &copy; 
+            <a href="https://github.com/socialeee"> Student Diary Team
+            </span>
         </div>
     </div>
 </footer>  

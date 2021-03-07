@@ -79,6 +79,7 @@
     <!-- Page level custom scripts -->
     {{-- <script src="{{asset('asset/js/demo/datatables-demo.js')}}"></script> --}}
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    @yield('js')
     <script>
         $(document).ready( function () {
             var table = $('#datatable').DataTable();
