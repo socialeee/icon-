@@ -15,11 +15,8 @@ class PelangganController extends Controller
      */
     public function index()
     {
-        // if(auth()->user()->hasRole('sales')){
-        //     return 'ok';
-        // }
-        $pelanggan = Pelanggan::all();
-
+        $pelanggan = Pelanggan::orderBy('updated_at', 'desc')->get();
+        
         return view('pelanggan.index', compact('pelanggan'));
     }
 
@@ -42,12 +39,17 @@ class PelangganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'nomor_so' => 'required',
             'nama' => 'required|min:3|max:255',
             'alamat' => 'required|min:3|max:255',
         ]);
 
-        $input = $request->only(['nama', 'alamat', 'status', 'file1']);
-        $input['sales_id'] = auth()->user()->id;
+        $input = $request->only(['nomor_so','nama', 'alamat', 'status', 'file1']);
+        $input['activator_id'] = auth()->user()->id;
+        if($request->hasFile('file1')) {
+            $input['file1'] = rand().'.'.request()->file1->getClientOriginalExtension();
+            request()->file1->move(public_path('asset/file'), $input['file1']);
+        }
 
         Pelanggan::create($input);
 
@@ -85,36 +87,25 @@ class PelangganController extends Controller
      */
     public function update(Request $request, $id)
     {   
-        if(auth()->user()->hasRole('activator')){
         $request->validate([
-            'status' => 'required',
-            'file1' => 'required|mimes:pdf|max:10000',
-            ]);
-        }
-
-        if(auth()->user()->hasRole('sales')){
-        $request->validate([
+            'nomor_so' => 'required',
             'nama' => 'required|min:3|max:255',
             'alamat' => 'required|min:3|max:255',
-            ]);
-        }
+            'status' => 'required',
+        ]);
 
         $pelanggan = Pelanggan::find($id);
         $input = $request->all();
-
-        if(auth()->user()->hasRole('activator')){
-            $input['activator_id'] = auth()->user()->id;
-        }
 
         $old_file1 = $pelanggan->file1;
         if($request->hasFile('file1')) {
             if($old_file1 != null) {
                 File::delete('asset/file/'.$old_file1);
             }
-            $input['file1'] = time().'.'.request()->file1->getClientOriginalExtension();
+            $input['file1'] = rand().'.'.request()->file1->getClientOriginalExtension();
             request()->file1->move(public_path('asset/file'), $input['file1']);
         } else {
-            $input['file1'] = $old_file1;
+            unset($input['file1']);
         }
         // dd($input);
 
@@ -138,12 +129,12 @@ class PelangganController extends Controller
     }
 
     public function getDownload(Pelanggan $pelanggan)
-{
-    $file= public_path(). "/asset/file/". $pelanggan->file1;
-    $headers = [
-        'Content-Type' => 'application/pdf',
-     ];
+    {
+        $file= public_path(). "/asset/file/". $pelanggan->file1;
+        $headers = [
+            'Content-Type' => 'application/pdf',
+        ];
 
-    return response()->download($file, 'pelanggan-'.$pelanggan->id.'.pdf', $headers);
-}
+        return response()->download($file, 'pelanggan-'.$pelanggan->id.'.pdf', $headers);
+    }
 }

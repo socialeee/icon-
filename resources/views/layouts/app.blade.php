@@ -82,7 +82,10 @@
     @yield('js')
     <script>
         $(document).ready( function () {
-            var table = $('#datatable').DataTable();
+            var table = $('#datatable').DataTable({
+                "ordering" : false,
+                // "order": [0, 'desc']
+            });
 
             table.on('click', '.edit', function(){
                 $tr = $(this).closest('tr');
@@ -92,6 +95,7 @@
 
                 var data = table.row($tr).data();
 
+                $('#nomor_so').val(data[2]);
                 $('#nama').val(data[3]);
                 $('#alamat').val(data[5]);
                 if(data[1] == 'AKTIF') {

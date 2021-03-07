@@ -15,8 +15,8 @@ class CreatePelanggansTable extends Migration
     {
         Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_id')->constrained('users');
             $table->foreignId('activator_id')->nullable()->constrained('users');
+            $table->string('nomor_so');
             $table->string('nama');
             $table->text('alamat');
             $table->enum('status', ['AKTIF', 'NONAKTIF'])->default('NONAKTIF');

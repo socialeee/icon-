@@ -3,7 +3,7 @@
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
             <span>Copyright &copy; 
-            <a href="https://github.com/socialeee"> Student Diary Team
+            <a href="https://github.com/socialeee"> Student Diary Team </a>
             </span>
         </div>
     </div>

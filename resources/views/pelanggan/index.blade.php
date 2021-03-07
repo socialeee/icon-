@@ -14,7 +14,7 @@
     </div>
     <div class="card-body">
         <!-- Button trigger modal -->
-        @role('sales')
+        @role('activator')
         <div class="float-right mb-2">
             <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#createModal">Tambah Pelanggan</button>
         </div>
@@ -31,6 +31,10 @@
                         <form action="{{ route('pelanggan.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
+                              <label for="exampleInputEmail1" class="form-label">Nomor SO</label>
+                              <input type="text" name="nomor_so" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
                               <label for="exampleInputEmail1" class="form-label">Nama Pelanggan</label>
                               <input type="text" name="nama" class="form-control" required>
                             </div>
@@ -38,7 +42,6 @@
                                 <label for="exampleInputEmail1" class="form-label">Alamat</label>
                                 <input type="text" name="alamat" class="form-control" required>
                               </div>
-                              @role('activator')
                               <label for="text" class="form-label">Status</label>
                               <div class="form-check">
                                 <input class="form-check-input" type="radio" name="status" id="flexRadioDefault1" value="AKTIF">
@@ -57,7 +60,6 @@
                                 <label for="formFile" class="form-label">Unggah Dokumen</label>
                                 <input class="form-control" type="file" id="formFile" name="file1">
                               </div>
-                              @endrole
                               <div class="modal-footer"><button class="btn btn-secondary" type="button" data-dismiss="modal">tutup</button><button class="btn btn-primary" type="submit">Simpan</button></div>
                           </form>
                     </div>
@@ -76,15 +78,18 @@
                         <form action="/pelanggan" method="POST" enctype="multipart/form-data" id="editForm">
                             @csrf
                             @method('PATCH')
-                                <div class="mb-3">
+                            <div class="mb-3">
+                              <label for="exampleInputEmail1" class="form-label">Nomor SO</label>
+                              <input type="text" name="nomor_so" class="form-control" id="nomor_so" required>
+                            </div>
+                              <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Nama Pelanggan</label>
-                                <input type="text" name="nama" class="form-control" id="nama" required @if(auth()->user()->hasRole('activator|maintainer')) disabled @endif>
+                                <input type="text" name="nama" class="form-control" id="nama" required>
                               </div>
                               <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Alamat</label>
-                                <input type="text" name="alamat" id="alamat" class="form-control" required @if(auth()->user()->hasRole('activator|maintainer')) disabled @endif>
+                                <input type="text" name="alamat" id="alamat" class="form-control" required>
                               </div>
-                              @role('activator')
                               <label for="text" class="form-label">Status</label>
                               <div class="form-check">
                                 <input class="form-check-input" type="radio" name="status" id="stat_aktif" value="AKTIF">
@@ -103,7 +108,6 @@
                                 <label for="formFile" class="form-label">Unggah Dokumen</label>
                                 <input class="form-control" type="file" id="formFile" name="file1">
                               </div>
-                              @endrole
                               <div class="modal-footer">
                                 <button class="btn btn-secondary" type="button" data-dismiss="modal">tutup</button>
                                 <button class="btn btn-primary" type="submit">Simpan</button>
@@ -120,10 +124,13 @@
                         <th style="display:none;">Id</th>
                         <th style="display:none;">Status</th>
                         <th>Nomor SO</th>
-                        <th>pelanggan</th>
-                        <th>status</th>
+                        <th>Pelanggan</th>
+                        <th>Status</th>
                         <th>Alamat</th>
+                        <th>Tanggal Upload</th>
+                        @role('activator|maintainer')
                         <th>Aksi</th>
+                        @endrole
                     </tr>
                 </thead>
                 <tbody>
@@ -131,21 +138,30 @@
                     <tr>
                         <td style="display:none;">{{$value->id}}</td>
                         <td style="display:none;">{{$value->status}}</td>
-                        <td>{{ $loop->iteration ?? '' }}</td>
+                        <td>{{ $value->nomor_so ?? '' }}</td>
                         <td>{{ $value->nama }}</td>
-                        <td>{{ $value->status }}</td>
+                        <td><span class="badge badge-{{ $value->status == 'AKTIF' ? 'success' : 'warning' }}">{{ $value->status }}</span></td>
                         <td>{{ $value->alamat }}</td>
+                        <td>{{ $value->updated_at->format('d-M-Y') }}</td>
+                        @role('activator|maintainer')
                         <td>
+                            @role('activator|maintainer')
                             <form action="{{route('pelanggan.destroy', [$value->id])}}" method="POST">
                                 @csrf
                                 @method('delete')
-                                @role('activator|sales')
+                                @role('activator')
                                 <a href="#" class="btn btn-primary edit">edit</a>
                                 <button class="btn btn-danger btn-delete" type="submit">delete</button>
                                 @endrole
+                                @role('activator|maintainer')
+                                @if($value->file1 != null)
                                 <a target="_blank" href="{{route('pelanggan.download', [$value->id])}}" class="btn btn-info">download</a>
-                            </form>
+                                @endif
+                                @endrole
+                              </form>
+                            @endrole
                         </td>
+                        @endrole
                     </tr>
                     @endforeach
                 </tbody>

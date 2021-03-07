@@ -9,12 +9,12 @@ class Pelanggan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'alamat', 'status', 'file1', 'sales_id', 'activator_id'];
+    protected $fillable = ['nomor_so','nama', 'alamat', 'status', 'file1', 'activator_id'];
 
-    public function sales()
-    {
-        return $this->belongsTo(User::class, 'sales_id');
-    }
+    // public function sales()
+    // {
+    //     return $this->belongsTo(User::class, 'sales_id');
+    // }
 
     public function activator()
     {
