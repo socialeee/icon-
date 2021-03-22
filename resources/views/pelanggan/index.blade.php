@@ -55,6 +55,10 @@
                                   Non Aktif
                                 </label>
                               </div>
+                              <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Pelaksana Tugas</label>
+                                <input type="text" name="ptl" class="form-control" id="ptl" required>
+                              </div>
                               <br>
                               <div class="mb-3">
                                 <label for="formFile" class="form-label">Unggah Dokumen</label>
@@ -82,29 +86,33 @@
                               <label for="exampleInputEmail1" class="form-label">Nomor SO</label>
                               <input type="text" name="nomor_so" class="form-control" id="nomor_so" required>
                             </div>
-                              <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Nama Pelanggan</label>
-                                <input type="text" name="nama" class="form-control" id="nama" required>
-                              </div>
-                              <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Alamat</label>
-                                <input type="text" name="alamat" id="alamat" class="form-control" required>
-                              </div>
-                              <label for="text" class="form-label">Status</label>
-                              <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" id="stat_aktif" value="AKTIF">
-                                <label class="form-check-label" for="flexRadioDefault1">
-                                  Aktif
-                                </label>
-                              </div>
-                              <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" id="stat_nonaktif" value="NONAKTIF">
-                                <label class="form-check-label" for="flexRadioDefault2">
-                                  Non Aktif
-                                </label>
-                              </div>
-                              <br>
-                              <div class="mb-3">
+                            <div class="mb-3">
+                              <label for="exampleInputEmail1" class="form-label">Nama Pelanggan</label>
+                              <input type="text" name="nama" class="form-control" id="nama" required>
+                            </div>
+                            <div class="mb-3">
+                              <label for="exampleInputEmail1" class="form-label">Alamat</label>
+                              <input type="text" name="alamat" id="alamat" class="form-control" required>
+                            </div>
+                            <label for="text" class="form-label">Status</label>
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="status" id="stat_aktif" value="AKTIF">
+                              <label class="form-check-label" for="flexRadioDefault1">
+                                Aktif
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="status" id="stat_nonaktif" value="NONAKTIF">
+                              <label class="form-check-label" for="flexRadioDefault2">
+                                Non Aktif
+                              </label>
+                            </div>
+                            <div class="mb-3">
+                              <label for="exampleInputEmail1" class="form-label">Pelaksana Tugas</label>
+                              <input type="text" name="ptl" class="form-control" id="ptl" required>
+                            </div>
+                            <br>
+                            <div class="mb-3">
                                 <label for="formFile" class="form-label">Unggah Dokumen</label>
                                 <input class="form-control" type="file" id="formFile" name="file1">
                               </div>
@@ -128,6 +136,7 @@
                         <th>Status</th>
                         <th>Alamat</th>
                         <th>Tanggal Upload</th>
+                        <th>Pelaksana</th>
                         @role('activator|maintainer')
                         <th>Aksi</th>
                         @endrole
@@ -143,6 +152,7 @@
                         <td><span class="badge badge-{{ $value->status == 'AKTIF' ? 'success' : 'warning' }}">{{ $value->status }}</span></td>
                         <td>{{ $value->alamat }}</td>
                         <td>{{ $value->updated_at->format('d-M-Y') }}</td>
+                        <td>{{ $value->ptl }}</td>
                         @role('activator|maintainer')
                         <td>
                             @role('activator|maintainer')

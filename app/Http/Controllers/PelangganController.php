@@ -42,9 +42,10 @@ class PelangganController extends Controller
             'nomor_so' => 'required',
             'nama' => 'required|min:3|max:255',
             'alamat' => 'required|min:3|max:255',
+            'ptl' => 'required',
         ]);
 
-        $input = $request->only(['nomor_so','nama', 'alamat', 'status', 'file1']);
+        $input = $request->only(['nomor_so','nama', 'alamat', 'status', 'ptl', 'file1']);
         $input['activator_id'] = auth()->user()->id;
         if($request->hasFile('file1')) {
             $input['file1'] = rand().'.'.request()->file1->getClientOriginalExtension();

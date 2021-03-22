@@ -21,6 +21,7 @@ class CreatePelanggansTable extends Migration
             $table->text('alamat');
             $table->enum('status', ['AKTIF', 'NONAKTIF'])->default('NONAKTIF');
             $table->string('file1')->nullable();
+            $table->string('ptl');
             $table->timestamps();
         });
     }
