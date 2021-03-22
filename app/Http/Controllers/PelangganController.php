@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pelanggan;
 use Illuminate\Support\Facades\File;
+use File as FileO;
+use ZipArchive;
 
 class PelangganController extends Controller
 {
@@ -27,7 +29,7 @@ class PelangganController extends Controller
      */
     public function create()
     {
-        //
+        return view('pelanggan.create');
     }
 
     /**
@@ -38,20 +40,32 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
+        $messages = [
+            "file1.max" => "Maksimal 3 file."
+         ];
+        
         $request->validate([
             'nomor_so' => 'required',
             'nama' => 'required|min:3|max:255',
             'alamat' => 'required|min:3|max:255',
             'ptl' => 'required',
-        ]);
+            'file1.*' => 'mimes:pdf|max:5000',
+            'file1' => 'max:3', 
+        ], $messages);
 
         $input = $request->only(['nomor_so','nama', 'alamat', 'status', 'ptl', 'file1']);
         $input['activator_id'] = auth()->user()->id;
-        if($request->hasFile('file1')) {
-            $input['file1'] = rand().'.'.request()->file1->getClientOriginalExtension();
-            request()->file1->move(public_path('asset/file'), $input['file1']);
-        }
 
+        if ($request->hasFile('file1')) {
+            foreach ($request->file('file1') as $key => $pdf) {
+                $name = rand().$key.'.'.$pdf->getClientOriginalExtension();
+                $pdf->move(public_path('asset/file'), $name);
+                $data[] = $name;
+            }
+        }
+        $input['file1'] = json_encode($data);
+
+        // dd($input);
         Pelanggan::create($input);
 
         return redirect()->route('pelanggan.index')->with('status', 'Pelanggan berhasil ditambahkan');
@@ -76,7 +90,8 @@ class PelangganController extends Controller
      */
     public function edit($id)
     {   
-        //
+        $data = Pelanggan::find($id);
+        return view('pelanggan.edit', compact('data'));
     }
 
     /**
@@ -88,27 +103,40 @@ class PelangganController extends Controller
      */
     public function update(Request $request, $id)
     {   
+        $messages = [
+            "file1.max" => "Maksimal 3 file."
+         ];
+
         $request->validate([
             'nomor_so' => 'required',
             'nama' => 'required|min:3|max:255',
             'alamat' => 'required|min:3|max:255',
             'status' => 'required',
-        ]);
-
+            'ptl' => 'required',
+            'file1.*' => 'mimes:pdf|max:5000',
+            'file1' => 'max:3', 
+        ], $messages);
+        
         $pelanggan = Pelanggan::find($id);
         $input = $request->all();
+        // dd($input);
 
         $old_file1 = $pelanggan->file1;
         if($request->hasFile('file1')) {
             if($old_file1 != null) {
-                File::delete('asset/file/'.$old_file1);
+                foreach (json_decode($old_file1) as $key => $pdf) {
+                    File::delete('asset/file/'.$pdf);
+                }
             }
-            $input['file1'] = rand().'.'.request()->file1->getClientOriginalExtension();
-            request()->file1->move(public_path('asset/file'), $input['file1']);
+            foreach ($request->file('file1') as $key => $pdf) {
+                $name = rand().$key.'.'.$pdf->getClientOriginalExtension();
+                $pdf->move(public_path('asset/file'), $name);
+                $data[] = $name;
+            }
+            $input['file1'] = json_encode($data);
         } else {
             unset($input['file1']);
         }
-        // dd($input);
 
         $pelanggan->update($input);
 
@@ -123,7 +151,12 @@ class PelangganController extends Controller
      */
     public function destroy(Pelanggan $pelanggan)
     {
-        File::delete('asset/file/'.$pelanggan->file1);
+        if($pelanggan->file1 != null) {
+            foreach (json_decode($pelanggan->file1) as $key => $pdf) {
+                File::delete('asset/file/'.$pdf);
+            }
+        }
+
         $pelanggan->delete();
 
         return redirect()->route('pelanggan.index')->with('status', 'Pelanggan berhasil dihapus');
@@ -131,11 +164,28 @@ class PelangganController extends Controller
 
     public function getDownload(Pelanggan $pelanggan)
     {
-        $file= public_path(). "/asset/file/". $pelanggan->file1;
-        $headers = [
-            'Content-Type' => 'application/pdf',
-        ];
+        $headers = ["Content-Type"=>"application/zip"];
+        $fileName = $pelanggan->nama.'-'.rand().'.zip';
 
-        return response()->download($file, 'pelanggan-'.$pelanggan->id.'.pdf', $headers);
+        $zip = new ZipArchive;
+   
+   
+        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE)
+        {
+            $files = [];
+            
+            foreach(json_decode($pelanggan->file1) as $key => $value){
+                $files[] = public_path(). "/asset/file/". $value;
+            }
+
+            foreach ($files as $key => $value) {
+                $relativeNameInZipFile = basename($value);
+                $zip->addFile($value, $relativeNameInZipFile);
+            }
+             
+            $zip->close();
+        }
+    
+        return response()->download(public_path($fileName), $fileName, $headers);
     }
 }

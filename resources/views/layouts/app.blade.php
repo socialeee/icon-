@@ -81,33 +81,23 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     @yield('js')
     <script>
+        $(document).on("click", ".btn-modal", function(e) {
+            e.preventDefault();
+            var t = $(this).data("container");
+            $.ajax({
+                url: $(this).data("href"),
+                dataType: "html",
+                success: function(e) {
+                    $(t).html(e).modal("show")
+                }
+            })
+        });
+
         $(document).ready( function () {
             var table = $('#datatable').DataTable({
                 "ordering" : false,
                 // "order": [0, 'desc']
             });
-
-            table.on('click', '.edit', function(){
-                $tr = $(this).closest('tr');
-                if($($tr).hasClass('child')) {
-                    $tr = $tr.prev('.parent');
-                }
-
-                var data = table.row($tr).data();
-
-                $('#nomor_so').val(data[2]);
-                $('#nama').val(data[3]);
-                $('#alamat').val(data[5]);
-                if(data[1] == 'AKTIF') {
-                    $('#stat_aktif').prop('checked', true);
-                    $('#stat_nonaktif').prop('checked', false);
-                } else {
-                    $('#stat_aktif').prop('checked', false);
-                    $('#stat_nonaktif').prop('checked', true);
-                }
-                $('#editForm').attr('action', '/pelanggan/' + data[0]);
-                $('#editModal').modal('show');
-            })
         } );
 
         $(document).on("click", '.btn-delete', function(e) {
